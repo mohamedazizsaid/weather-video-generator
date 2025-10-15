@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="توقعات الطقس اليومية بتصميم عصري وسهل الاستخدام">
+    <title>توقعات الطقس</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', 'Tajawal', sans-serif; /* Added fallback Arabic font */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            direction: rtl;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f4f8; /* Fallback background */
+        }
+
+        video.background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.8); /* Slight dim for readability */
+        }
+
+        .weather-container {
+            background-color: rgba(147, 176, 252, 0.95);
+            color: #212121;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            z-index: 1;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 70vh;
+            overflow-y: auto;
+            margin: 1rem;
+        }
+
+        .weather-box {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .weather-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .weather-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .weather-row span {
+            margin: 0 0.5rem;
+            white-space: nowrap;
+        }
+
+        h1 {
+            color: #212121;
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            color: #212121;
+        }
+
+        .generate-video-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            margin: 1rem 0;
+            background-color: #1e88e5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .generate-video-btn:hover {
+            background-color: #1565c0;
+        }
+
+        .weather-video {
+            display: block;
+            margin: 1rem auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .weather-container {
+                padding: 1rem;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .weather-row {
+                flex-direction: column;
+                gap: 0.5rem;
+                font-size: 1rem;
+            }
+
+            .weather-video {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .weather-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .weather-container::-webkit-scrollbar-thumb {
+            background-color: #1e88e5;
+            border-radius: 4px;
+        }
+
+        .weather-container::-webkit-scrollbar-track {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <video class="background-video" autoplay muted loop playsinline>
+        <source src="{{ url_for('static', filename='nuage.mp4') }}" type="video/mp4">
+        متصفحك لا يدعم عرض الفيديو.
+    </video>
+
+    <h1>حالة الطقس المتوقعة</h1>
+
+    <div class="weather-container">
+        <h2>🌦️ التوقعات الجوية اليوم</h2>
+        <div class="weather-box">
+            {% if weather %}
+                {% for item in weather %}
+                    <div class="weather-row">
+                        <span><strong>{{ item['ville'] }}</strong></span>
+                        <span>🔥 أقصى: {{ item['temp_max'] }}°C</span>
+                        <span>❄️ أدنى: {{ item['temp_min'] }}°C</span>
+                        <span>{{ item['icone'] }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; font-size: 1.1rem;">❗ لا توجد بيانات متاحة حالياً.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{{ url_for('generer_video') }}" class="generate-video-btn">🎬 توليد فيديو الطقس</a>
+
+    <video class="weather-video" autoplay loop muted controls>
+        <source src="{{ url_for('static', filename='meteo_video.mp4') }}" type="video/mp4">
+        متصفحك لا يدعم عرض الفيديو.
+    </video>
+</body>
+</html>

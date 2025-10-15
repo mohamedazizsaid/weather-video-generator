@@ -1,0 +1,8 @@
+flask 
+moviepy 
+mysql-connector-python 
+python-dotenv 
+imageio 
+imageio-ffmpeg 
+numpy 
+pillow 
